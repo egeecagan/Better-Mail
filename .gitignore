@@ -1,0 +1,40 @@
+# virtual environments
+venv/
+.venv/
+ENV/
+env/
+.ENV/
+
+# python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# environment variables
+.env
+.env.*
+
+# csv, logs, temp files
+*.csv
+*.log
+*.tmp
+
+# markdown and notes
+*.md
+*.txt
+
+# jupyter notebooks
+.ipynb_checkpoints/
+
+# editor settings
+.vscode/
+.idea/
+*.iml
+
+# macos / windows
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# pytest cache
+.pytest_cache/
