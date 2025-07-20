@@ -14,7 +14,7 @@ Functions:
 
 import email
 
-def return_mails_as_messages(conn) -> list[dict]:
+def return_mails_as_messages(conn) -> list:
     status, messages = conn.search(None, "ALL") # NONE charset = utf-8 demek ALL ise kriterler
     if status != "OK":
         return []
@@ -28,8 +28,8 @@ def return_mails_as_messages(conn) -> list[dict]:
         status, data = conn.fetch(mail_id, "(RFC822)")
         if status != "OK":
             continue
-
+        
         raw_email = data[0][1] # gene tek elemanli iterable 0,0 ise header gereksiz bizim icin
         msglist.append(email.message_from_bytes(raw_email))
 
-    return msglist
+    return msglist # son gelen en basta olmak uzere mail govdeleri
