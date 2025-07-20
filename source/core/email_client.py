@@ -8,4 +8,4 @@ def connect(credentials):
         return mail
     
     except Exception as e:
-        return f"Connection failed: {e}"
+        return f"connection failed: {e}"
