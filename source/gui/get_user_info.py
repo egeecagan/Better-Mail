@@ -1,3 +1,21 @@
+"""
+This module provides a Streamlit-based UI to collect user credentials 
+required to connect to an IMAP email server.
+
+It returns a dictionary containing:
+    - EMAIL: The user's email address.
+    - PASSWORD: An app-specific password (not the regular email password).
+    - HOST: The IMAP server hostname (default: imap.gmail.com).
+    - PORT: The IMAP port number (default: 993).
+
+Note:
+    - For Gmail users, app passwords are required due to security policies.
+    - To generate one, enable 2-Step Verification in your Google account 
+      and create an App Password.
+    - For other providers, update the HOST and PORT fields accordingly.
+"""
+
+
 import streamlit as st
 
 def get_user_credentials():

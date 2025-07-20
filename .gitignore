@@ -10,16 +10,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# environment variables
-.env
-.env.*
-
 # csv, logs, temp files
 *.csv
 *.log
 *.tmp
-
-*.txt
 
 # jupyter notebooks
 .ipynb_checkpoints/

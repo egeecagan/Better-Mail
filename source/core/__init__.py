@@ -1,1 +1,2 @@
 from .email_client import connect
+from .mails_as_messages import return_mails_as_messages
