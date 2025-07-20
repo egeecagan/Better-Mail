@@ -19,8 +19,6 @@ __pycache__/
 *.log
 *.tmp
 
-# markdown and notes
-*.md
 *.txt
 
 # jupyter notebooks
