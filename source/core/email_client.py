@@ -14,8 +14,8 @@ Expected keys in the `credentials` dictionary:
     - "PASSWORD": App-specific password or login credential
     - "HOST": IMAP server address
     - "PORT": IMAP server port (usually 993)
+    ileride port ve hostu degistirebilirim
 """
-
 
 import imaplib
 
@@ -23,8 +23,14 @@ def connect(credentials):
     
     try:
         mail = imaplib.IMAP4_SSL(credentials["HOST"], credentials["PORT"])
-        mail.login(credentials["EMAIL"], credentials["PASSWORD"])
-        return mail
-    
     except Exception as e:
-        return f"Connection Failed: {e}"
+        return f"Server connection failed: {e}"
+
+    try:
+        mail.login(credentials["EMAIL"], credentials["PASSWORD"])
+    except mail.error as e:
+        return f"Login failed: {e}"
+    except Exception as e:
+        return f"Unexpected login error: {e}"
+
+    return mail

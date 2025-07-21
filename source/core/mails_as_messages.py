@@ -3,25 +3,30 @@ This module contains a single function that retrieves emails via an IMAP connect
 and converts them into `email.message.Message` objects.
 
 These message objects (containing headers, body, and other MIME parts) are 
-intended to be passed to the `parser` module in the `core` sub-package for further processing.
+intended to be passed to the `parser` module in the `core` sub-package for parsing
 
 Functions:
-    - return_mails_as_messages(conn) -> list[Message]:
-        Searches for all emails using the IMAP connection `conn`, fetches each one in RFC822 format, 
-        and returns a list of parsed email message objects using Python's built-in `email` library.
+    - return_mails_as_messages(conn, search_criteria):
+        Searches for all emails using the IMAP connection `conn` and applies the search criteria, 
+        fetches each one in RFC822 format, and returns a list of parsed email message objects using 
+        Python's built-in `email` library.
 """
 
 
 import email
 
-def return_mails_as_messages(conn) -> list:
-    status, messages = conn.search(None, "ALL") # NONE charset = utf-8 demek ALL ise kriterler
+
+def return_mails_as_messages(conn, * ,search_criteria="ALL") -> list:
+    """
+    Returns list of email.message.Message objects matching the given search criteria
+    
+    search_criterion: str -> "ALL", "SEEN", "UNSEEN", "FROM xyz@example.com", etc.
+    """
+    status, messages = conn.search(None, search_criteria)
     if status != "OK":
         return []
 
-    mail_ids = messages[0].split()  # messages bir liste ama icinde sadece 1 eleman var [b'1 2 3 4 5'] gibi
-    # 0 index olarak tek eleman oldugu icin onu alir
-
+    mail_ids = messages[0].split()
     msglist = []
 
     for mail_id in reversed(mail_ids):
@@ -29,7 +34,17 @@ def return_mails_as_messages(conn) -> list:
         if status != "OK":
             continue
         
-        raw_email = data[0][1] # gene tek elemanli iterable 0,0 ise header gereksiz bizim icin
+        raw_email = data[0][1]
         msglist.append(email.message_from_bytes(raw_email))
 
-    return msglist # son gelen en basta olmak uzere mail govdeleri
+        # burdaki kelimeler rfc822 de email.message_from_bytes(raw_email) sonucu kullanabilecegimiz basliklar indexing gibi dictionary
+
+        # From, To, Subject, Date, Message-ID, Reply-To, Cc, Bcc, In-Reply-To, References, Sender, Return-Path 
+        # Delivered-To, Disposition-Notification-To, List-Unsubscribe, Content-Type, MIME-Version, Content-Transfer-Encoding
+        # X-Mailer, X-Spam-Status, X-Priority, X-Originating-IP, X-Google-Smtp-Source, X-MS-Exchange-Organization-SCL
+        # X-MS-Exchange-Organization-AuthAs, X-MS-Exchange-Organization-AuthMechanism, X-MS-Exchange-Organization-Network-Message-Id
+
+        # Bu email.message_from_bytes(raw_email) sonucu .get_payload() body i verir onu parse etmemiz lazim
+
+    return msglist
+

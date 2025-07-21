@@ -4,7 +4,6 @@ from datetime import date
 def show_filters():
     st.subheader("🔍 Filter Options")
 
-    # Filter type: Date, Sender, Subject
     filter_type = st.selectbox(
         "Select filter type:",
         ["By Date", "By Sender", "By Subject", "Show All"]
@@ -19,11 +18,16 @@ def show_filters():
         )
 
         if date_choice == "🗂️ Custom Range":
-            
-            start_date, end_date = st.date_input(
+            date_range = st.date_input(
                 "📆 Select custom date range:",
                 value=(date.today(), date.today())
             )
+
+            if isinstance(date_range, tuple):
+                start_date, end_date = date_range
+            else:
+                start_date = end_date = date_range
+
             filters["time_filter"] = "custom"
             filters["custom_range"] = (start_date, end_date)
         else:
