@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta 
+from datetime import date, datetime, timedelta 
 from utils import parse_date
 
 def filter_today(seen: list[dict], unseen: list[dict]) -> list[dict]:
@@ -12,13 +12,47 @@ def filter_week(seen: list[dict], unseen: list[dict]) -> list[dict]:
     all_mails = seen + unseen
     return [mail for mail in all_mails if week_ago <= parse_date(mail["date"]).date() <= today]
 
-def filter_mails(filter_: dict, seen: list[dict], unseen: list[dict]):  # list of dictionaries a dict contains sender subject body etc.
-    match filter_:
-        case:
-            pass
+def filter_month(seen: list[dict], unseen: list[dict]) -> list[dict]:
+    today = datetime.now().date()
+    month_ago = today - timedelta(days=31)
+    all_mails = seen + unseen
+    return [mail for mail in all_mails if month_ago <= parse_date(mail["date"]).date() <= today]
 
-def filter_custom_range():
-    pass
+def filter_mails(filter_: dict, seen: list[dict], unseen: list[dict]) -> list[dict]:
+    all_mails = seen + unseen
 
-def list_senders(all: list[dict]) -> list[dict]:
-    pass
+    if not filter_:
+        return all_mails
+
+    if "time_filter" in filter_:
+        match filter_["time_filter"]:
+            case "today":
+                return filter_today(seen, unseen)
+            case "week":
+                return filter_week(seen, unseen)
+            case "month":
+                return filter_month(seen, unseen)
+            case "all":
+                return all_mails
+            case "custom":
+                start, end = filter_["custom_range"]
+                return filter_custom_range(all_mails, start, end)
+
+    elif "from_filter" in filter_:
+        sender_query = filter_["from_filter"].lower()
+        return [mail for mail in all_mails if sender_query in mail["from"].lower()]
+
+    elif "subject_filter" in filter_:
+        subject_query = filter_["subject_filter"].lower()
+        return [mail for mail in all_mails if subject_query in mail["subject"].lower()]
+
+    return all_mails
+
+def filter_custom_range(mails: list[dict], start_date: date, end_date: date) -> list[dict]:
+    return [
+        mail for mail in mails
+        if start_date <= parse_date(mail["date"]).date() <= end_date
+    ]
+
+def list_senders(all_mails: list[dict]) -> list[str]:
+    return sorted(set(mail["from"].strip() for mail in all_mails))
