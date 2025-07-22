@@ -22,7 +22,7 @@ def connect(credentials) -> Union[imaplib.IMAP4_SSL, str]: # Union in typing is 
 
     try:
         mail.login(credentials["EMAIL"], credentials["PASSWORD"])
-    except mail.error as e:
+    except imaplib.IMAP4.error as e:
         return f"Login failed: {e}"
     except Exception as e:
         return f"Unexpected login error: {e}"
