@@ -7,7 +7,7 @@ def show_filters(all_mails: list[dict]) -> dict:
         "Select filter type:",
         ["By Date", "By Sender", "By Subject", "Show All"]
     )
-
+    
     filters = {}
 
     if filter_type == "By Date":
@@ -40,7 +40,9 @@ def show_filters(all_mails: list[dict]) -> dict:
     elif filter_type == "By Sender":
         sender_list = list_senders(all_mails)
         selected_sender = st.selectbox("📨 Select sender:", sender_list)
-        filters["from_filter"] = selected_sender.strip()
+        if selected_sender:
+            filters["from_filter"] = selected_sender.strip()
+
 
     elif filter_type == "By Subject":
         subject = st.text_input("📝 Subject keyword:")

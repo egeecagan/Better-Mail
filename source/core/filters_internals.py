@@ -1,5 +1,6 @@
 from datetime import date, datetime, timedelta 
 from utils import parse_date
+from email.utils import parseaddr
 
 def filter_today(seen: list[dict], unseen: list[dict]) -> list[dict]:
     today = datetime.now().date()
@@ -54,5 +55,14 @@ def filter_custom_range(mails: list[dict], start_date: date, end_date: date) -> 
         if start_date <= parse_date(mail["date"]).date() <= end_date
     ]
 
-def list_senders(all_mails: list[dict]) -> list[str]:
-    return sorted(set(mail["from"].strip() for mail in all_mails))
+
+def list_senders(all_mails):
+    senders = []
+    for mail in all_mails:
+        raw_from = mail.get("from")
+        if raw_from:
+            name, addr = parseaddr(raw_from)
+            if addr:  # e-posta adresi varsa
+                senders.append(addr)
+    return sorted(set(senders))
+

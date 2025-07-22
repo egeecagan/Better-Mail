@@ -1,36 +1,88 @@
+from sys import stderr
 import streamlit as st
 from core import connect, return_mails_as_messages
 from gui import get_user_credentials
 from gui.initialize import show_welcome
 
 def main():
-    st.set_page_config(page_title="BetterMail", page_icon="📬")
+    st.set_page_config(page_title="BetterMail", page_icon="📬") # html title gibi dusun
+    
+    # if "connected" not in st.session_state:
+    #     st.session_state.connected = False
+    #     st.session_state.conn = None
+    #     st.session_state.mail_addr = ""
 
-    if "connected" not in st.session_state:
-        st.session_state.connected = False
-        st.session_state.conn = None
-        st.session_state.mail_addr = ""
+    # if not st.session_state.connected:
+    #     credentials = get_user_credentials()
 
-    if not st.session_state.connected:
-        credentials = get_user_credentials()
+    #     if credentials:
+    #         conn = connect(credentials)
+    #         if isinstance(conn, str):
+    #             st.error(conn)
+    #             print(conn, file=stderr)
+    #         else:
+    #             st.session_state.conn = conn
+    #             st.session_state.connected = True
+    #             st.session_state.mail_addr = credentials["EMAIL"]
+    #             st.rerun()
+    # else:
+    #     conn = st.session_state.conn
+    #     conn.select("INBOX")
+    #     st.success("✅ Connection Successful!")
 
-        if credentials:
-            conn = connect(credentials)
-            if isinstance(conn, str):
-                st.error(conn)
-            else:
-                st.session_state.conn = conn
-                st.session_state.connected = True
-                st.session_state.mail_addr = credentials["EMAIL"]
-                st.rerun()
-    else:
-        conn = st.session_state.conn
-        conn.select("INBOX")
-        st.success("✅ Connection Successful!")
+    #     # buraya kadar geliyor
 
-        seen, unseen = return_mails_as_messages(conn)
+    #    seen = return_mails_as_messages(conn, search_criteria="SEEN")
+    #    unseen = return_mails_as_messages(conn, search_criteria="UNSEEN")
 
-        show_welcome(st.session_state.mail_addr, seen, unseen)
+
+    seenss = [
+        {"sender": "lecturer@cs.uni.edu", "subject": "Project Update", "date": "2025-07-10 14:23:00"},
+        {"sender": "club@science.org", "subject": "Meeting Reminder", "date": "2025-07-09 10:45:00"},
+        {"sender": "advisor@university.edu", "subject": "Assignment Feedback", "date": "2025-07-08 12:30:00"},
+        {"sender": "admin@portal.edu", "subject": "Exam Schedule", "date": "2025-07-07 09:15:00"},
+        {"sender": "hr@company.com", "subject": "Internship Info", "date": "2025-07-06 16:40:00"},
+        {"sender": "lecturer@cs.uni.edu", "subject": "New Policy", "date": "2025-07-05 11:00:00"},
+        {"sender": "advisor@university.edu", "subject": "Grades Posted", "date": "2025-07-04 13:20:00"},
+        {"sender": "club@science.org", "subject": "Workshop Announcement", "date": "2025-07-03 15:05:00"},
+        {"sender": "hr@company.com", "subject": "Conference Call", "date": "2025-07-02 10:00:00"},
+        {"sender": "admin@portal.edu", "subject": "Project Update", "date": "2025-07-01 14:30:00"},
+        {"sender": "advisor@university.edu", "subject": "Assignment Feedback", "date": "2025-07-06 13:50:00"},
+        {"sender": "lecturer@cs.uni.edu", "subject": "Exam Schedule", "date": "2025-07-05 09:00:00"},
+        {"sender": "club@science.org", "subject": "Grades Posted", "date": "2025-07-04 08:45:00"},
+        {"sender": "hr@company.com", "subject": "Internship Info", "date": "2025-07-03 17:20:00"},
+        {"sender": "admin@portal.edu", "subject": "Workshop Announcement", "date": "2025-07-02 11:30:00"},
+        {"sender": "lecturer@cs.uni.edu", "subject": "Meeting Reminder", "date": "2025-07-01 16:00:00"},
+        {"sender": "club@science.org", "subject": "New Policy", "date": "2025-07-07 15:10:00"},
+        {"sender": "hr@company.com", "subject": "Project Update", "date": "2025-07-08 09:40:00"},
+        {"sender": "admin@portal.edu", "subject": "Conference Call", "date": "2025-07-09 10:10:00"},
+        {"sender": "advisor@university.edu", "subject": "Workshop Announcement", "date": "2025-07-10 14:45:00"}
+        ]
+
+    unseenss = [
+        {"sender": "hr@company.com", "subject": "Urgent Meeting", "date": "2025-07-21 09:30:00"},
+        {"sender": "club@science.org", "subject": "Weekly Newsletter", "date": "2025-07-21 11:10:00"},
+        {"sender": "advisor@university.edu", "subject": "Submission Deadline", "date": "2025-07-20 14:00:00"},
+        {"sender": "admin@portal.edu", "subject": "Maintenance Notice", "date": "2022-07-20 08:45:00"},
+        {"sender": "lecturer@cs.uni.edu", "subject": "Follow-up", "date": "2025-07-19 10:25:00"},
+        {"sender": "club@science.org", "subject": "Upcoming Event", "date": "2025-07-19 13:50:00"},
+        {"sender": "advisor@university.edu", "subject": "Final Reminder", "date": "2025-07-18 09:00:00"},
+        {"sender": "hr@company.com", "subject": "Policy Agreement", "date": "2025-07-18 15:35:00"},
+        {"sender": "admin@portal.edu", "subject": "Password Expiry", "date": "2025-07-17 10:10:00"},
+        {"sender": "lecturer@cs.uni.edu", "subject": "Research Opportunity", "date": "2025-07-17 12:25:00"},
+        {"sender": "club@science.org", "subject": "Seminar Registration", "date": "2025-07-16 11:05:00"},
+        {"sender": "advisor@university.edu", "subject": "Thesis Meeting", "date": "2025-07-16 14:30:00"},
+        {"sender": "hr@company.com", "subject": "Payroll Update", "date": "2025-07-15 13:00:00"},
+        {"sender": "admin@portal.edu", "subject": "Document Approval", "date": "2025-07-15 16:15:00"},
+        {"sender": "lecturer@cs.uni.edu", "subject": "Office Hours", "date": "2025-07-14 10:45:00"},
+        {"sender": "club@science.org", "subject": "Club Elections", "date": "2025-07-14 08:30:00"},
+        {"sender": "advisor@university.edu", "subject": "Transcript Request", "date": "2025-07-13 14:20:00"},
+        {"sender": "hr@company.com", "subject": "Survey", "date": "2025-07-13 09:40:00"},
+        {"sender": "admin@portal.edu", "subject": "Account Info", "date": "2025-07-12 11:55:00"},
+        {"sender": "lecturer@cs.uni.edu", "subject": "Reminder: Form", "date": "2025-07-12 10:15:00"}
+    ]
+
+    show_welcome("st.session_state.mail_addr", seenss, unseenss)
 
 if __name__ == "__main__":
     main()

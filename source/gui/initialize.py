@@ -9,6 +9,7 @@ import math
 from .show_filters_gui import show_filters
 
 def show_mail_summary(title: str, mails: list[dict], items_per_page: int = 10):
+    
     """
         Represents list of mails view in my application.
         Title is either seen or unseen. Think this function creates a column
