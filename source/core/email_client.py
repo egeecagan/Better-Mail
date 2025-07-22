@@ -8,18 +8,12 @@ It exposes a single function:
         Attempts to establish an IMAP over SSL connection using the given credentials.
         On success, returns an `imaplib.IMAP4_SSL` object.
         On failure, returns a string describing the error (e.g., "Connection Failed: ...").
-        
-Expected keys in the `credentials` dictionary:
-    - "EMAIL": User's email address
-    - "PASSWORD": App-specific password or login credential
-    - "HOST": IMAP server address
-    - "PORT": IMAP server port (usually 993)
-    ileride port ve hostu degistirebilirim
 """
 
 import imaplib
+from typing import Union
 
-def connect(credentials):
+def connect(credentials) -> Union[imaplib.IMAP4_SSL, str]: # Union in typing is to tell this function can return 2 different type
     
     try:
         mail = imaplib.IMAP4_SSL(credentials["HOST"], credentials["PORT"])

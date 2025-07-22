@@ -1,9 +1,9 @@
 """
 This module contains a single function that retrieves emails via an IMAP connection 
-and converts them into `email.message.Message` objects.
+and converts them into `email.message.Message` objects and returns them in a list.
 
 These message objects (containing headers, body, and other MIME parts) are 
-intended to be passed to the `parser` module in the `core` sub-package for parsing
+intended to be passed to the `parser` module in the `core` sub-package for parsing.
 
 Functions:
     - return_mails_as_messages(conn, search_criteria):
@@ -14,9 +14,9 @@ Functions:
 
 
 import email
+from email.message import Message
 
-
-def return_mails_as_messages(conn, * ,search_criteria="ALL") -> list:
+def return_mails_as_messages(conn, * ,search_criteria="ALL") -> list[Message]:
     """
     Returns list of email.message.Message objects matching the given search criteria
     
@@ -28,6 +28,8 @@ def return_mails_as_messages(conn, * ,search_criteria="ALL") -> list:
 
     mail_ids = messages[0].split()
     msglist = []
+    
+    ## buraya geliyor
 
     for mail_id in reversed(mail_ids):
         status, data = conn.fetch(mail_id, "(RFC822)")
@@ -37,14 +39,10 @@ def return_mails_as_messages(conn, * ,search_criteria="ALL") -> list:
         raw_email = data[0][1]
         msglist.append(email.message_from_bytes(raw_email))
 
-        # burdaki kelimeler rfc822 de email.message_from_bytes(raw_email) sonucu kullanabilecegimiz basliklar indexing gibi dictionary
+        # email.message_from_bytes ile elde edilen nesne, başlıklara sözlük gibi erişim sağlar (case-insensitive).
 
-        # From, To, Subject, Date, Message-ID, Reply-To, Cc, Bcc, In-Reply-To, References, Sender, Return-Path 
-        # Delivered-To, Disposition-Notification-To, List-Unsubscribe, Content-Type, MIME-Version, Content-Transfer-Encoding
-        # X-Mailer, X-Spam-Status, X-Priority, X-Originating-IP, X-Google-Smtp-Source, X-MS-Exchange-Organization-SCL
-        # X-MS-Exchange-Organization-AuthAs, X-MS-Exchange-Organization-AuthMechanism, X-MS-Exchange-Organization-Network-Message-Id
-
-        # Bu email.message_from_bytes(raw_email) sonucu .get_payload() body i verir onu parse etmemiz lazim
+        # Kullanılabilecek başlıklar örnekleri: From, To, Subject, Date, Message-ID, Reply-To, Cc, Bcc, Content-Type, vb.
+        # Bunlara msg["From"], msg.get("Subject") gibi erişilir.
 
     return msglist
 

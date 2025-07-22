@@ -25,11 +25,8 @@ Since I couldn't find any existing tool or service that provides a clear overvie
 ## 🛠️ Technologies Used
 
 - **python 3 (3.13.4)**
-- **pandas**              – for CSV parsing and data manipulation
 - **streamlit**           - for graphical user interface on web without frontend knowledge
-- **beautifulsoup**       – for parsing HTML content in emails
 - **git cli**             - for centralized version control ( to be real only for learning purposes)
-- **python-dotenv**       – for securely storing and accessing email credentials
 
 ## ⚙️ Packages Used (builtin)
 

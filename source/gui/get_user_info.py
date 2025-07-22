@@ -23,7 +23,7 @@ def get_user_credentials():
     
     email = st.text_input("Email Address")
     password = st.text_input(
-        "App Password",
+        "Application Password",
         type="password",
         help="""
         This password is not related to your main Gmail password.
@@ -37,8 +37,43 @@ def get_user_credentials():
         """
     )
 
-    host = st.text_input("IMAP Host", value="imap.gmail.com", help="""Default Mail Provider""")
-    port = st.text_input("IMAP Port", value="993", help="""Default IMAP Port""")
+    st.warning("This app only supports IMAP. POP3 will not work.")
+
+    host_options = {
+        "Gmail": "imap.gmail.com",
+        "Outlook / Office365": "outlook.office365.com",
+        "Yahoo Mail": "imap.mail.yahoo.com",
+        "iCloud (Apple Mail)": "imap.mail.me.com",
+        "Yandex Mail": "imap.yandex.com",
+        "Zoho Mail": "imap.zoho.com",
+        "Other (Manual Entry)": "manual"
+    }
+
+    port_options = {
+        "Default (SSL, 993)": 993,
+        "Old (STARTTLS, 143)": 143,
+        "Manual entry": "manual"
+    }
+
+    provider = st.selectbox("Choose your email provider", list(host_options.keys()))
+    selected_host = host_options[provider]
+
+    if selected_host == "manual":
+        host = st.text_input("Enter your IMAP host manually")
+    else:
+        host = selected_host
+        st.markdown(f"Using host: `{host}`")
+
+    port = st.selectbox("Choose your IMAP port", list(port_options.keys()))
+    selected_port = port_options[port]
+    
+
+
+    if selected_port == "manual":
+        port = st.text_input("Enter your IMAP port manually")
+    else:
+        port = selected_port
+        st.markdown(f"Using port: `{port}`")
     
     if st.button("Connect"):
         try:

@@ -10,11 +10,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# csv, logs, temp files
-*.csv
-*.log
-*.tmp
-
 # jupyter notebooks
 .ipynb_checkpoints/
 
@@ -31,4 +26,5 @@ desktop.ini
 # pytest cache
 .pytest_cache/
 
+# personal todo file
 TODOS.md

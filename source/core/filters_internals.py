@@ -1,6 +1,7 @@
 from datetime import date, datetime, timedelta 
 from utils import parse_date
 from email.utils import parseaddr
+from dateutil.relativedelta import relativedelta  # A month can ne 28, 29, 30, 31 days
 
 def filter_today(seen: list[dict], unseen: list[dict]) -> list[dict]:
     today = datetime.now().date()
@@ -15,9 +16,15 @@ def filter_week(seen: list[dict], unseen: list[dict]) -> list[dict]:
 
 def filter_month(seen: list[dict], unseen: list[dict]) -> list[dict]:
     today = datetime.now().date()
-    month_ago = today - timedelta(days=31)
+    month_ago = today - relativedelta(months=1)
     all_mails = seen + unseen
     return [mail for mail in all_mails if month_ago <= parse_date(mail["date"]).date() <= today]
+
+def filter_custom_range(mails: list[dict], start_date: date, end_date: date) -> list[dict]:
+    return [
+        mail for mail in mails
+        if start_date <= parse_date(mail["date"]).date() <= end_date
+    ]
 
 def filter_mails(filter_: dict, seen: list[dict], unseen: list[dict]) -> list[dict]:
     all_mails = seen + unseen
@@ -49,20 +56,14 @@ def filter_mails(filter_: dict, seen: list[dict], unseen: list[dict]) -> list[di
 
     return all_mails
 
-def filter_custom_range(mails: list[dict], start_date: date, end_date: date) -> list[dict]:
-    return [
-        mail for mail in mails
-        if start_date <= parse_date(mail["date"]).date() <= end_date
-    ]
 
-
-def list_senders(all_mails):
+def list_senders(all_mails: list[dict]) -> set[str]: # all mails burda seen + unseen olucak
     senders = []
     for mail in all_mails:
         raw_from = mail.get("from")
         if raw_from:
             name, addr = parseaddr(raw_from)
-            if addr:  # e-posta adresi varsa
+            if addr:  
                 senders.append(addr)
     return sorted(set(senders))
 

@@ -5,14 +5,14 @@ from core import list_senders
 def show_filters(all_mails: list[dict]) -> dict:
     filter_type = st.selectbox(
         "Select filter type:",
-        ["By Date", "By Sender", "By Subject", "Show All"]
+        ["By Date", "By Sender", "By Subject", "Show All"] # future i am thinking of adding a keyword searching in body algorithm
     )
     
     filters = {}
 
     if filter_type == "By Date":
         date_choice = st.radio(
-            "", ["⭐️ Today", "🗓️ This Week", "📅 This Month", "📦 All", "🗂️ Custom Range"],
+            "Choose a time filter", ["⭐️ Today", "🗓️ This Week", "📅 This Month", "📦 All", "🗂️ Custom Range"],
             horizontal=True
         )
 
@@ -22,6 +22,9 @@ def show_filters(all_mails: list[dict]) -> dict:
                 value=(date.today(), date.today())
             )
 
+            """
+            calismiyor tek tarih seciulir ise hata need fix 
+            """
             if isinstance(date_range, tuple):
                 start_date, end_date = date_range
             else:

@@ -8,6 +8,7 @@ from core import *
 import math
 from .show_filters_gui import show_filters
 
+
 def show_mail_summary(title: str, mails: list[dict], items_per_page: int = 10):
     
     """
@@ -42,11 +43,13 @@ def show_mail_summary(title: str, mails: list[dict], items_per_page: int = 10):
     start_idx = (page - 1) * items_per_page
     end_idx = start_idx + items_per_page
 
+    # i heard st.markdown supports html and css and then used ai to create a box for me
+    # future i will make these boxes clickable and they will show the mail (at least i hope)
     for mail in mails[start_idx:end_idx]:
         with st.container():
             st.markdown(f"""
                 <div style="background-color:#1f1f1f; padding:15px; border-radius:10px; margin-bottom:10px; border: 1px solid #333;">
-                    <strong>From:</strong> <a href="mailto:{mail['sender']}" style="color:#1E90FF;">{mail['sender']}</a><br>
+                    <strong>From:</strong> <a href="mailto:{mail['from']}" style="color:#1E90FF;">{mail['from']}</a><br>
                     <strong>Subject:</strong> {mail['subject']}<br>
                     <strong>Date:</strong> {mail['date']}
                 </div>
@@ -75,12 +78,14 @@ def show_welcome(mail_addr: str, seen: list[dict], unseen: list[dict]):
         st.session_state["show_custom_filters"] = True
 
     if st.session_state["show_filters"]:
+
+        # bu kisim calistigi soylenemez
         st.markdown(
             "<div style='width: 100%; max-width: 1000px; margin: auto;'>", unsafe_allow_html=True
         )
 
         filter_type = st.radio(
-            "",
+            "Choose one",
             ["⭐️ Today", "🗓️ This week", "📦 Total"],
             horizontal=True
         )
