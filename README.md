@@ -1,6 +1,6 @@
 # 📬 Better Mail
 
-A tool for consumers to better filter their mail inbox.
+A tool for consumers to group who sent mails to them and see them in a list.
 
 ## 🚨 Main Problem
 
@@ -9,17 +9,21 @@ I receive a large number of emails from various individuals and companies. Over 
 The goal of this project is to analyze my inbox in order to:
 
 - Identify how many unique senders have contacted me.
-- Group emails by sender.
+- And group senders to additional folders for who are they.
 - Detect and list all email subscriptions or newsletter-type emails.
 
-Since I couldn't find any existing tool or service that provides a clear overview of this information, I decided to build my own solution. Also i thought it would be fun to code this project because it solves a real life problem of mine.
+Since I couldn't find any existing tool or service that provides a clear overview of this information, I decided to build my own solution (it is free 😝). Also i thought it would be fun to code this project because it solves a real life problem of mine.
 
 ## How to use
 
-1. Move your working directory to the main project 
-   folder if your folder is in desktop do `cd desktop`
+1. Move your working directory into the main project 
+   folder if your folder is in desktop do `cd bettermail`
 
-2. Use `python -m bettermail` and follow the instructions
+2. Create a venv with `python -m venv venv` and then `source venv/bin/activate`
+
+3. Install the requirements in the requirements.txt folder with `pip`
+
+4. Use `streamlit run source/app.py` and follow the instructions
    on the graphical user interface
 
 ## 🛠️ Technologies Used
