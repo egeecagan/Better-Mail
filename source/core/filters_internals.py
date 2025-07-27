@@ -1,13 +1,7 @@
 from datetime import date, datetime, timedelta 
-from utils import parse_date, is_encoded_subject, decode_mime_words
-import html
+from utils import parse_date, decode_and_escape
 from email.utils import parseaddr
 from dateutil.relativedelta import relativedelta  # A month can ne 28, 29, 30, 31 days
-
-def decode_and_escape(value: str) -> str:
-    if is_encoded_subject(value):
-        value = decode_mime_words(value)
-    return html.escape(value)
 
 def filter_today(seen: list[dict], unseen: list[dict]) -> list[dict]:
     """

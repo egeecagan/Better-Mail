@@ -1,7 +1,7 @@
-from email.utils import parsedate_to_datetime
+from email.utils import parsedate_to_datetime, parseaddr
 from email.header import decode_header
 from datetime import datetime
-import re
+import re, html
 
 def parse_date(date_str: str) -> datetime:
     """
@@ -34,3 +34,32 @@ def is_encoded_subject(subject: str) -> bool:
     Checks whether a given email subject line is MIME-encoded (RFC 2047).
     """
     return bool(re.search(r"=\?.*\?.*\?.*\?=", subject))
+
+def decode_and_escape(value: str) -> str:
+    if is_encoded_subject(value):
+        value = decode_mime_words(value)
+    return html.escape(value)
+
+def decode_only(value: str) -> str:
+    if is_encoded_subject(value):
+        value = decode_mime_words(value)
+    return value
+
+def fix_date(date: str) -> str:
+    fixed = decode_and_escape(date)
+    try:
+        dt = parsedate_to_datetime(fixed)
+        return dt.strftime("%d %B %Y, %H:%M")
+    except Exception:
+        return "date error"
+    
+def fix_sender(sender: str) -> str:
+    if not sender or sender.lower() == "unknown":
+        return "unknown"
+    
+    fixed = decode_only(sender)
+    print(fixed)
+    
+    _, email = parseaddr(fixed)
+    print(email)
+    return email

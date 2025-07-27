@@ -7,15 +7,7 @@ import streamlit as st
 from core import *
 import math
 from .show_filters_gui import show_filters
-import html
 from utils import *
-
-
-def decode_and_escape(value: str) -> str:
-    if is_encoded_subject(value):
-        value = decode_mime_words(value)
-    return html.escape(value)
-
 
 def show_mail_summary(title: str, mails: list[dict], items_per_page: int = 10):
     """
@@ -52,9 +44,10 @@ def show_mail_summary(title: str, mails: list[dict], items_per_page: int = 10):
 
     for mail in mails[start_idx:end_idx]:
         with st.container():
-            sender = decode_and_escape(mail.get("from", "unknown"))
+
+            sender = fix_sender(mail.get("from", "unknown"))
             subject = decode_and_escape(mail.get("subject", "No Subject"))
-            date = decode_and_escape(mail.get("date", "Unknown"))
+            date = fix_date(mail.get("date", "Unknown"))
 
             st.markdown(f"""
                 <div style="background-color:#1f1f1f; padding:15px; border-radius:10px; margin-bottom:10px; border: 1px solid #333;">

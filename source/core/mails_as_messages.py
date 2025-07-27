@@ -31,7 +31,7 @@ def return_mails_as_messages(conn, *, search_criteria="ALL") -> list[Message]:
         print("result of search is empty.", file=stderr)
         return []
 
-    mail_ids = messages[0].split()[-10:]
+    mail_ids = messages[0].split()[-10:] # last 10 mail only but i want all
     #print(f"{len(mail_ids)} mail ID's found.", file=stderr)
 
     msglist = []

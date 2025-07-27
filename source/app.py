@@ -40,7 +40,7 @@ def main():
             seen = return_mails_as_messages(conn, search_criteria="SEEN")
 
             x = [m for m in seen]
-            print([m['id'] for m in seen])
+            #print([m['id'] for m in seen])
 
 
             print("starting unseen...", file=stderr)
