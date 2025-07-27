@@ -1,7 +1,13 @@
 from datetime import date, datetime, timedelta 
-from utils import parse_date
+from utils import parse_date, is_encoded_subject, decode_mime_words
+import html
 from email.utils import parseaddr
 from dateutil.relativedelta import relativedelta  # A month can ne 28, 29, 30, 31 days
+
+def decode_and_escape(value: str) -> str:
+    if is_encoded_subject(value):
+        value = decode_mime_words(value)
+    return html.escape(value)
 
 def filter_today(seen: list[dict], unseen: list[dict]) -> list[dict]:
     """
@@ -23,7 +29,6 @@ def filter_week(seen: list[dict], unseen: list[dict]) -> list[dict]:
 def filter_month(seen: list[dict], unseen: list[dict]) -> list[dict]:
     """
     Filters emails received within the last 1 month (inclusive).
-
     Uses relativedelta to handle varying month lengths (28-31 days).
     """
     today = datetime.now().date()
@@ -43,10 +48,8 @@ def filter_custom_range(mails: list[dict], start_date: date, end_date: date) -> 
 def filter_mails(filter_: dict, seen: list[dict], unseen: list[dict]) -> list[dict]:
     """
     Applies a filter to the given seen and unseen email lists.
-
     filter_ is a dict keys can be ["time_filter": "today, week month, all"
     , "custom_range", "from_filter", "subject_filter"]
-
     """
     all_mails = seen + unseen
 
@@ -73,15 +76,14 @@ def filter_mails(filter_: dict, seen: list[dict], unseen: list[dict]) -> list[di
 
     elif "subject_filter" in filter_:
         subject_query = filter_["subject_filter"].lower()
-        return [mail for mail in all_mails if subject_query in mail["subject"].lower()]
-
+        return [mail for mail in all_mails if subject_query in decode_and_escape(mail["subject"]).lower()]
     return all_mails
-
 
 def list_senders(all_mails: list[dict]) -> set[str]:
     """
     Extracts and returns a sorted set of unique sender email addresses.
-    all_mails is seen + unseen mail list
+    all_mails is seen + unseen mail list. If streamlit creates a problem in future
+    i will make thiss function to return a csv file for senders
     """
     senders = []
     for mail in all_mails:

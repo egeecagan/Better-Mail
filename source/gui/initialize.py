@@ -104,7 +104,6 @@ def show_welcome(mail_addr: str, seen: list[dict], unseen: list[dict]):
             case _:
                 filtered = seen + unseen
 
-        # Daha sağlam eşleme için mail id'leriyle filtreleme
         seen_ids = {m['id'] for m in seen}
         unseen_ids = {m['id'] for m in unseen}
 

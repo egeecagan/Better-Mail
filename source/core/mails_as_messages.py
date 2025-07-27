@@ -20,7 +20,7 @@ def return_mails_as_messages(conn, *, search_criteria="ALL") -> list[Message]:
     """
     Returns list of email.message.Message objects matching the given search criteria
     """
-    print(f"imap search criterias are : {search_criteria}", file=stderr)
+    #print(f"imap search criterias are : {search_criteria}", file=stderr)
 
     status, messages = conn.search(None, search_criteria)
     if status != "OK":
@@ -31,13 +31,14 @@ def return_mails_as_messages(conn, *, search_criteria="ALL") -> list[Message]:
         print("result of search is empty.", file=stderr)
         return []
 
-    mail_ids = messages[0].split()[-10:] # last 10 meaning streamlit işlemeyi çok yavaş yapuoyor proje ayvayı yedi.
-    print(f"{len(mail_ids)} mail ID's found.", file=stderr)
+    mail_ids = messages[0].split()[-10:]
+    #print(f"{len(mail_ids)} mail ID's found.", file=stderr)
 
     msglist = []
 
     for mail_id in reversed(mail_ids):
-        status, data = conn.fetch(mail_id, "(RFC822)")
+        
+        status, data = conn.fetch(mail_id, "(BODY.PEEK[])")
         if status != "OK":
             print(f"mail {mail_id} fetch error.", file=stderr)
             continue
@@ -45,6 +46,9 @@ def return_mails_as_messages(conn, *, search_criteria="ALL") -> list[Message]:
         try:
             raw_email = data[0][1]
             msg = email.message_from_bytes(raw_email)
+
+            msg['id'] = mail_id
+    
             msglist.append(msg)
         except Exception as e:
             print(f"parse error: {e}", file=stderr)
