@@ -23,7 +23,9 @@ Since I couldn't find any existing tool or service that provides a clear overvie
 
 3. Install the requirements in the requirements.txt folder with `pip`
 
-4. Use `streamlit run source/app.py` and follow the instructions
+4. Use `cd source`
+
+5. Use `streamlit run app.py` and follow the instructions
    on the graphical user interface
 
 ## 🛠️ Technologies Used
