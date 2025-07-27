@@ -4,29 +4,50 @@ from email.utils import parseaddr
 from dateutil.relativedelta import relativedelta  # A month can ne 28, 29, 30, 31 days
 
 def filter_today(seen: list[dict], unseen: list[dict]) -> list[dict]:
+    """
+    Filters emails received today from both seen and unseen lists.
+    """
     today = datetime.now().date()
     all_mails = seen + unseen
     return [mail for mail in all_mails if parse_date(mail["date"]).date() == today]
 
 def filter_week(seen: list[dict], unseen: list[dict]) -> list[dict]:
+    """
+    Filters emails received within the last 7 days (inclusive).
+    """
     today = datetime.now().date()
     week_ago = today - timedelta(days=7)
     all_mails = seen + unseen
     return [mail for mail in all_mails if week_ago <= parse_date(mail["date"]).date() <= today]
 
 def filter_month(seen: list[dict], unseen: list[dict]) -> list[dict]:
+    """
+    Filters emails received within the last 1 month (inclusive).
+
+    Uses relativedelta to handle varying month lengths (28-31 days).
+    """
     today = datetime.now().date()
     month_ago = today - relativedelta(months=1)
     all_mails = seen + unseen
     return [mail for mail in all_mails if month_ago <= parse_date(mail["date"]).date() <= today]
 
 def filter_custom_range(mails: list[dict], start_date: date, end_date: date) -> list[dict]:
+    """
+    Filters emails within a custom date range.
+    """
     return [
         mail for mail in mails
         if start_date <= parse_date(mail["date"]).date() <= end_date
     ]
 
 def filter_mails(filter_: dict, seen: list[dict], unseen: list[dict]) -> list[dict]:
+    """
+    Applies a filter to the given seen and unseen email lists.
+
+    filter_ is a dict keys can be ["time_filter": "today, week month, all"
+    , "custom_range", "from_filter", "subject_filter"]
+
+    """
     all_mails = seen + unseen
 
     if not filter_:
@@ -57,7 +78,11 @@ def filter_mails(filter_: dict, seen: list[dict], unseen: list[dict]) -> list[di
     return all_mails
 
 
-def list_senders(all_mails: list[dict]) -> set[str]: # all mails burda seen + unseen olucak
+def list_senders(all_mails: list[dict]) -> set[str]:
+    """
+    Extracts and returns a sorted set of unique sender email addresses.
+    all_mails is seen + unseen mail list
+    """
     senders = []
     for mail in all_mails:
         raw_from = mail.get("from")

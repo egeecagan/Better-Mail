@@ -12,37 +12,44 @@ Functions:
         Python's built-in `email` library.
 """
 
-
+from sys import stderr
 import email
 from email.message import Message
 
-def return_mails_as_messages(conn, * ,search_criteria="ALL") -> list[Message]:
+def return_mails_as_messages(conn, *, search_criteria="ALL") -> list[Message]:
     """
     Returns list of email.message.Message objects matching the given search criteria
-    
-    search_criterion: str -> "ALL", "SEEN", "UNSEEN", "FROM xyz@example.com", etc.
     """
+    print(f"imap search criterias are : {search_criteria}", file=stderr)
+
     status, messages = conn.search(None, search_criteria)
     if status != "OK":
+        print(f"search failed: {status}", file=stderr)
         return []
 
-    mail_ids = messages[0].split()
+    if not messages or not messages[0]:
+        print("result of search is empty.", file=stderr)
+        return []
+
+    mail_ids = messages[0].split()[-10:] # last 10 meaning streamlit işlemeyi çok yavaş yapuoyor proje ayvayı yedi.
+    print(f"{len(mail_ids)} mail ID's found.", file=stderr)
+
     msglist = []
-    
-    ## buraya geliyor
 
     for mail_id in reversed(mail_ids):
         status, data = conn.fetch(mail_id, "(RFC822)")
         if status != "OK":
+            print(f"mail {mail_id} fetch error.", file=stderr)
             continue
         
-        raw_email = data[0][1]
-        msglist.append(email.message_from_bytes(raw_email))
+        try:
+            raw_email = data[0][1]
+            msg = email.message_from_bytes(raw_email)
+            msglist.append(msg)
+        except Exception as e:
+            print(f"parse error: {e}", file=stderr)
 
-        # email.message_from_bytes ile elde edilen nesne, başlıklara sözlük gibi erişim sağlar (case-insensitive).
-
-        # Kullanılabilecek başlıklar örnekleri: From, To, Subject, Date, Message-ID, Reply-To, Cc, Bcc, Content-Type, vb.
-        # Bunlara msg["From"], msg.get("Subject") gibi erişilir.
-
+    print(f"total {len(msglist)} mail recieved.", file=stderr)
     return msglist
+
 

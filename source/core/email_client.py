@@ -4,8 +4,8 @@ to an email server using the credentials provided.
 
 It exposes a single function:
 
-    - connect(credentials): 
-        Attempts to establish an IMAP over SSL connection using the given credentials.
+    - connect(credentials: a dictionary containing user information): 
+        Attempts to create an IMAP over SSL connection using the given credentials.
         On success, returns an `imaplib.IMAP4_SSL` object.
         On failure, returns a string describing the error (e.g., "Connection Failed: ...").
 """

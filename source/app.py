@@ -1,7 +1,9 @@
 from sys import stderr
 import streamlit as st
 from core import connect, return_mails_as_messages, list_senders
-from gui import get_user_credentials
+from gui import get_user_credentials, show_welcome
+import imaplib
+
 
 def main():
     st.set_page_config(page_title="BetterMail", page_icon="📬") # html title gibi dusun
@@ -26,13 +28,30 @@ def main():
                 st.rerun()
     else:
         conn = st.session_state.conn
-        conn.select("INBOX")
-        st.success("✅ Connection Successful!")
 
-        # buraya kadar geliyor
+        try:
+            # Burada direkt INBOX seçilebilir
+            conn.select("INBOX")
+            st.success("Connection Successful!")
 
-        seen = return_mails_as_messages(conn, search_criteria="SEEN")
-        unseen = return_mails_as_messages(conn, search_criteria="UNSEEN")
+            # buraya ulasiyoruz
+
+            print("starting seen...", file=stderr)
+            seen = return_mails_as_messages(conn, search_criteria="SEEN")
+
+            print("starting unseen...", file=stderr)
+            unseen = return_mails_as_messages(conn, search_criteria="UNSEEN")
+
+            # buraya ulasamiyoruz
+
+            show_welcome(st.session_state.mail_addr, seen, unseen)
+
+        except imaplib.IMAP4.abort as e:
+            st.error("Connection failed!")
+            st.code(str(e))
+            st.session_state.connected = False
+            st.rerun()
+
 
 if __name__ == "__main__":
     main()

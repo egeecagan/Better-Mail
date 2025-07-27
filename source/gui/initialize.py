@@ -7,14 +7,21 @@ import streamlit as st
 from core import *
 import math
 from .show_filters_gui import show_filters
+import html
+from utils import *
+
+
+def decode_and_escape(value: str) -> str:
+    if is_encoded_subject(value):
+        value = decode_mime_words(value)
+    return html.escape(value)
 
 
 def show_mail_summary(title: str, mails: list[dict], items_per_page: int = 10):
-    
     """
-        Represents list of mails view in my application.
-        Title is either seen or unseen. Think this function creates a column
-        with specified title and has mails under it
+    Represents list of mails view in my application.
+    Title is either seen or unseen. This function creates a column
+    with specified title and has mails under it, paginated.
     """
 
     st.markdown(f"#### {title} ({len(mails)} mail)")
@@ -43,17 +50,20 @@ def show_mail_summary(title: str, mails: list[dict], items_per_page: int = 10):
     start_idx = (page - 1) * items_per_page
     end_idx = start_idx + items_per_page
 
-    # i heard st.markdown supports html and css and then used ai to create a box for me
-    # future i will make these boxes clickable and they will show the mail (at least i hope)
     for mail in mails[start_idx:end_idx]:
         with st.container():
+            sender = decode_and_escape(mail.get("from", "unknown"))
+            subject = decode_and_escape(mail.get("subject", "No Subject"))
+            date = decode_and_escape(mail.get("date", "Unknown"))
+
             st.markdown(f"""
                 <div style="background-color:#1f1f1f; padding:15px; border-radius:10px; margin-bottom:10px; border: 1px solid #333;">
-                    <strong>From:</strong> <a href="mailto:{mail['from']}" style="color:#1E90FF;">{mail['from']}</a><br>
-                    <strong>Subject:</strong> {mail['subject']}<br>
-                    <strong>Date:</strong> {mail['date']}
+                    <strong>From:</strong> <a href="mailto:{sender}" style="color:#1E90FF;">{sender}</a><br>
+                    <strong>Subject:</strong> {subject}<br>
+                    <strong>Date:</strong> {date}
                 </div>
             """, unsafe_allow_html=True)
+
 
 def show_welcome(mail_addr: str, seen: list[dict], unseen: list[dict]):
     st.title(f"📬 Welcome, {mail_addr}!")
@@ -78,11 +88,7 @@ def show_welcome(mail_addr: str, seen: list[dict], unseen: list[dict]):
         st.session_state["show_custom_filters"] = True
 
     if st.session_state["show_filters"]:
-
-        # bu kisim calistigi soylenemez
-        st.markdown(
-            "<div style='width: 100%; max-width: 1000px; margin: auto;'>", unsafe_allow_html=True
-        )
+        st.markdown("<div style='width: 100%; max-width: 1000px; margin: auto;'>", unsafe_allow_html=True)
 
         filter_type = st.radio(
             "Choose one",
@@ -98,8 +104,12 @@ def show_welcome(mail_addr: str, seen: list[dict], unseen: list[dict]):
             case _:
                 filtered = seen + unseen
 
-        seen_filtered = [m for m in filtered if m in seen]
-        unseen_filtered = [m for m in filtered if m in unseen]
+        # Daha sağlam eşleme için mail id'leriyle filtreleme
+        seen_ids = {m['id'] for m in seen}
+        unseen_ids = {m['id'] for m in unseen}
+
+        seen_filtered = [m for m in filtered if m['id'] in seen_ids]
+        unseen_filtered = [m for m in filtered if m['id'] in unseen_ids]
 
         col1, col2 = st.columns(2)
         with col1:
@@ -110,18 +120,19 @@ def show_welcome(mail_addr: str, seen: list[dict], unseen: list[dict]):
         st.markdown("</div>", unsafe_allow_html=True)
 
     if st.session_state["show_custom_filters"]:
-
         filters = show_filters(seen + unseen)
-
         filtered = filter_mails(filters, seen, unseen)
 
-        seen_filtered = [m for m in filtered if m in seen]
-        unseen_filtered = [m for m in filtered if m in unseen]
+        seen_ids = {m['id'] for m in seen}
+        unseen_ids = {m['id'] for m in unseen}
+
+        seen_filtered = [m for m in filtered if m['id'] in seen_ids]
+        unseen_filtered = [m for m in filtered if m['id'] in unseen_ids]
 
         col1, col2 = st.columns(2)
         with col1:
             show_mail_summary("📖 Seen Mails", seen_filtered)
         with col2:
             show_mail_summary("📪 Unseen Mails", unseen_filtered)
-        
+
         st.markdown("</div>", unsafe_allow_html=True)
